@@ -8,13 +8,13 @@ pipeline {
         SONAR_HOST_URL = 'http://172.16.15.35:2020' 
         SONAR_PROJECT_KEY = 'juice-shop-saya'
     }
+	
+	triggers {
+        // Opsi 1: Jenkins cek ke GitHub setiap menit (paling mudah untuk lokal)
+        pollSCM('* * * * *') 
+    }
 
     stages {
-        stage('Checkout Code') {
-            steps {
-                git branch: 'master', url: 'https://github.com/irppaann/juice-shop-saya'
-            }
-        }
 
         stage('SAST Analysis (SonarQube)') {
             steps {
