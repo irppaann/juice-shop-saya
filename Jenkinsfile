@@ -29,10 +29,12 @@ pipeline {
                                 depth: 1,          // Hanya mengambil commit terakhir
                                 noTags: false, 
                                 reference: '', 
-                                shallow: true      // Mengaktifkan mode shallow
+                                shallow: true,      // Mengaktifkan mode shallow
+                                timeout: 30         // set timeout saat clone jadi 30 mnt
                             ],
                             // Tambahan untuk mengatasi error RPC/HTTP2 yang Anda alami sebelumnya
-                            [$class: 'CheckoutOption', timeout: 20] 
+                            [$class: 'CheckoutOption', 
+                                timeout: 30]  // set timeout saat checkout jadi 30 mnt
                         ], 
                         submoduleCfg: [], 
                         userRemoteConfigs: [[url: 'https://github.com/irppaann/juice-shop-saya.git']]
