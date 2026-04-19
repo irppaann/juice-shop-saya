@@ -16,6 +16,31 @@ pipeline {
 
     stages {
 
+        stage('Checkout Code') {
+            steps {
+                script {
+                    // Mengganti 'checkout scm' standar dengan detail untuk shallow clone
+                    checkout([$class: 'GitSCM', 
+                        branches: [[name: '*/master']], // Pastikan sesuai branch Anda (master/main)
+                        doGenerateSubmoduleConfigurations: false, 
+                        extensions: [
+                            [
+                                $class: 'CloneOption', 
+                                depth: 1,          // Hanya mengambil commit terakhir
+                                noTags: false, 
+                                reference: '', 
+                                shallow: true      // Mengaktifkan mode shallow
+                            ],
+                            // Tambahan untuk mengatasi error RPC/HTTP2 yang Anda alami sebelumnya
+                            [$class: 'CheckoutOption', timeout: 20] 
+                        ], 
+                        submoduleCfg: [], 
+                        userRemoteConfigs: [[url: 'https://github.com/irppaann/juice-shop-saya.git']]
+                    ])
+                }
+            }
+        }    
+
         stage('SAST Analysis (SonarQube)') {
             steps {
                 withSonarQubeEnv('SonarQube-Lokal') {
