@@ -5,7 +5,7 @@ pipeline {
         // Nama kredensial yang Anda simpan di Jenkins (Manage Jenkins > Credentials)
         SONAR_TOKEN = credentials('sonar-token')
         // Sesuaikan dengan IP laptop Anda jika SonarQube jalan di Docker lokal
-        SONAR_HOST_URL = 'http://172.16.15.35:2020' 
+        SONAR_HOST_URL = 'http://192.168.18.14:2020' 
         SONAR_PROJECT_KEY = 'juice-shop-saya'
     }
 	
@@ -18,20 +18,33 @@ pipeline {
 
         stage('SAST Analysis (SonarQube)') {
             steps {
-                script {
-                    // Kita gunakan image resmi sonar-scanner-cli agar Jenkins tetap bersih
-                    docker.image('sonarsource/sonar-scanner-cli').inside('--network=host') {
-                        sh """
-                        sonar-scanner \
-                          -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                          -Dsonar.sources=. \
-                          -Dsonar.host.url=${SONAR_HOST_URL} \
-                          -Dsonar.token=${SONAR_TOKEN} \
-                          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                          -Dsonar.exclusions=node_modules/**,test/**,spec/**
-                        """
+                withSonarQubeEnv('SonarQube-Lokal') {
+                    script{
+                        docker.image('sonarsource/sonar-scanner-cli').inside('--network=host') {
+                            sh """
+                            sonar-scanner \
+                                -Dsonar.projectKey=juice-shop-project \
+                                -Dsonar.sources=. \
+                                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                                -Dsonar.exclusions=node_modules/**,test/**,spec/**
+                            """
+                        }
                     }
                 }
+                // script {
+                //     // Kita gunakan image resmi sonar-scanner-cli agar Jenkins tetap bersih
+                //     docker.image('sonarsource/sonar-scanner-cli').inside('--network=host') {
+                //         sh """
+                //         sonar-scanner \
+                //           -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                //           -Dsonar.sources=. \
+                //           -Dsonar.host.url=${SONAR_HOST_URL} \
+                //           -Dsonar.token=${SONAR_TOKEN} \
+                //           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                //           -Dsonar.exclusions=node_modules/**,test/**,spec/**
+                //         """
+                //     }
+                // }
             }
         }
 
