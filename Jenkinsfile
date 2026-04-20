@@ -5,7 +5,7 @@ pipeline {
         // Nama kredensial yang Anda simpan di Jenkins (Manage Jenkins > Credentials)
         SONAR_TOKEN = credentials('sonar-token')
         // Sesuaikan dengan IP laptop Anda jika SonarQube jalan di Docker lokal
-        SONAR_HOST_URL = 'http://192.168.18.14:2020' 
+        SONAR_HOST_URL = 'http://172.16.15.29:2020' 
         SONAR_PROJECT_KEY = 'juice-shop-saya'
     }
 	
@@ -53,6 +53,8 @@ pipeline {
                                 -Dsonar.projectKey=juice-shop-project \
                                 -Dsonar.sources=. \
                                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                                -Dsonar.host.url=${SONAR_HOST_URL} \
+                                -Dsonar.token=${SONAR_TOKEN} \
                                 -Dsonar.exclusions=node_modules/**,test/**,spec/**
                             """
                         }
