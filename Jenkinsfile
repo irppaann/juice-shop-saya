@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     // Mengganti 'checkout scm' standar dengan detail untuk shallow clone
-                    echo 'Menjalankan checkout code'
+                    echo 'START checkout code'
                     checkout([$class: 'GitSCM', 
                         branches: [[name: '*/master']], // Pastikan sesuai branch Anda (master/main)
                         doGenerateSubmoduleConfigurations: false, 
@@ -40,7 +40,7 @@ pipeline {
                         submoduleCfg: [], 
                         userRemoteConfigs: [[url: 'https://github.com/irppaann/juice-shop-saya.git']]
                     ])
-                    echo 'Checkout code berhasil dijalankan'
+                    echo 'END:SUCCESS Checkout code berhasil dijalankan'
                 }
             }
         }    
@@ -49,6 +49,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube-Lokal') {
                     script{
+                        echo 'START SAST Analysis'
                         docker.image('sonarsource/sonar-scanner-cli').inside('--network=host') {
                             sh """
                             sonar-scanner -X \
@@ -60,6 +61,7 @@ pipeline {
                                 -Dsonar.exclusions=node_modules/**,test/**,spec/**
                             """
                         }
+                        echo 'END:SUCCESS SAST Analysis berhasil dijalankan'
                     }
                 }
                 // script {
@@ -83,11 +85,13 @@ pipeline {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
                     script {
+                        echo 'START Quality Gate'
                         // Jenkins akan menunggu respon dari SonarQube apakah project ini "Passed" atau "Failed"
                         def qg = waitForQualityGate()
                         if (qg.status != 'OK') {
                             error "Pipeline berhenti karena Quality Gate SonarQube gagal: ${qg.status}"
                         }
+                        echo 'END:SUCCESS Quality Gate berhasil dijalankan'
                     }
                 }
             }
@@ -95,10 +99,11 @@ pipeline {
 
         stage('Build & Deploy (Docker)') {
             steps {
-                echo 'Hanya berjalan jika Quality Gate lulus...'
+                echo 'START Build image & deploy container'
                 sh 'docker build -t juice-shop-app .'
                 sh 'docker rm -f juice-shop-container || true'
                 sh 'docker run -d --name juice-shop-container -p 3000:3000 juice-shop-app'
+                echo 'END:SUCCESS Build & Deploy berhasil dijalankan'
             }
         }
     }
