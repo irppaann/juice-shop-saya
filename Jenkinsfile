@@ -51,13 +51,13 @@ pipeline {
                 withSonarQubeEnv('SonarQube-Lokal') {
                     script{
                         echo 'START SAST Analysis'
-                        docker.image('sonarsource/sonar-scanner-cli').inside('--network=host') {
+                        docker.image('sonarsource/sonar-scanner-cli').inside('--network=host -u 0:0') {
                             sh """
                             sonar-scanner -X \
                                 -Dsonar.projectKey=juice-shop-saya \
                                 -Dsonar.sources=. \
                                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                                -Dsonar.host.url=${SONAR_HOST_URL} \
+                                -Dsonar.host.url=http://172.16.15.29:2020 \
                                 -Dsonar.token=sqa_fe9b3301c18595d96409b2b7311a3a4bd65e8be3 \
                                 -Dsonar.exclusions=node_modules/**,test/**,spec/**
                             """
