@@ -21,6 +21,7 @@ pipeline {
                 script {
                     // Mengganti 'checkout scm' standar dengan detail untuk shallow clone
                     echo 'START checkout code'
+                    sh 'pwd' //untuk print path workspace yang sedang digunakan
                     checkout([$class: 'GitSCM', 
                         branches: [[name: '*/master']], // Pastikan sesuai branch Anda (master/main)
                         doGenerateSubmoduleConfigurations: false, 
