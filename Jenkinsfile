@@ -58,7 +58,7 @@ pipeline {
                                 -Dsonar.sources=. \
                                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
                                 -Dsonar.host.url=${SONAR_HOST_URL} \
-                                -Dsonar.token=sqp_1f2ca5d4d98dfeaac2094a18fb6b89721bc313c7 \
+                                -Dsonar.token=sqa_fe9b3301c18595d96409b2b7311a3a4bd65e8be3 \
                                 -Dsonar.exclusions=node_modules/**,test/**,spec/**
                             """
                         }
