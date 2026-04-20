@@ -48,6 +48,20 @@ pipeline {
 
         stage('SAST Analysis (SonarQube)') {
             steps {
+                script {
+                    sh """
+                    docker run --rm --network=host \
+                    -v "${WORKSPACE}:/usr/src" \
+                    sonarsource/sonar-scanner-cli \
+                    -Dsonar.projectKey=juice-shop-saya \
+                    -Dsonar.sources=. \
+                    -Dsonar.host.url=http://172.16.15.29:2020 \
+                    -Dsonar.token=sqa_fe9b3301c18595d96409b2b7311a3a4bd65e8be3 \
+                    -Dsonar.exclusions=node_modules/**,test/**,spec/** \
+                    -Dsonar.loglevel=DEBUG
+                    """
+                }
+
                 // withSonarQubeEnv('SonarQube-Lokal') {
                 //     script{
                 //         echo 'START SAST Analysis di Workspace: ${env.WORKSPACE}'
@@ -65,21 +79,22 @@ pipeline {
                 //         echo 'END:SUCCESS SAST Analysis berhasil dijalankan'
                 //     }
                 // }
-                script {
-                    echo 'START SAST Analysis di Workspace'
-                    // Kita gunakan image resmi sonar-scanner-cli agar Jenkins tetap bersih
-                    docker.image('sonarsource/sonar-scanner-cli').inside('--network=host -u 0:0') {
-                        sh """
-                        sonar-scanner \
-                          -Dsonar.projectKey=juice-shop-saya \
-                          -Dsonar.sources=. \
-                          -Dsonar.host.url=http://172.16.15.29:2020 \
-                          -Dsonar.token=sqa_fe9b3301c18595d96409b2b7311a3a4bd65e8be3 \
-                          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                          -Dsonar.exclusions=node_modules/**,test/**,spec/**
-                        """
-                    }
-                }
+
+                // script {
+                //     echo 'START SAST Analysis di Workspace'
+                //     // Kita gunakan image resmi sonar-scanner-cli agar Jenkins tetap bersih
+                //     docker.image('sonarsource/sonar-scanner-cli').inside('--network=host -u 0:0') {
+                //         sh """
+                //         sonar-scanner \
+                //           -Dsonar.projectKey=juice-shop-saya \
+                //           -Dsonar.sources=. \
+                //           -Dsonar.host.url=http://172.16.15.29:2020 \
+                //           -Dsonar.token=sqa_fe9b3301c18595d96409b2b7311a3a4bd65e8be3 \
+                //           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                //           -Dsonar.exclusions=node_modules/**,test/**,spec/**
+                //         """
+                //     }
+                // }
             }
         }
 
