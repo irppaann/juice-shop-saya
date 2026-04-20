@@ -51,7 +51,7 @@ pipeline {
                 withSonarQubeEnv('SonarQube-Lokal') {
                     script{
                         echo 'START SAST Analysis di Workspace: ${env.WORKSPACE}'
-                        docker.image('sonarsource/sonar-scanner-cli').inside('--network=host -u 0:0') {
+                        docker.image('sonarsource/sonar-scanner-cli') {
                             sh """
                             sonar-scanner -X \
                                 -Dsonar.projectKey=juice-shop-saya \
@@ -67,7 +67,7 @@ pipeline {
                 }
                 // script {
                 //     // Kita gunakan image resmi sonar-scanner-cli agar Jenkins tetap bersih
-                //     docker.image('sonarsource/sonar-scanner-cli').inside('--network=host') {
+                //     docker.image('sonarsource/sonar-scanner-cli').inside('--network=host -u 0:0') {
                 //         sh """
                 //         sonar-scanner \
                 //           -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
