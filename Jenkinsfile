@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     // Mengganti 'checkout scm' standar dengan detail untuk shallow clone
-                    sh 'Menjalankan checkout code'
+                    echo 'Menjalankan checkout code'
                     checkout([$class: 'GitSCM', 
                         branches: [[name: '*/master']], // Pastikan sesuai branch Anda (master/main)
                         doGenerateSubmoduleConfigurations: false, 
@@ -40,7 +40,7 @@ pipeline {
                         submoduleCfg: [], 
                         userRemoteConfigs: [[url: 'https://github.com/irppaann/juice-shop-saya.git']]
                     ])
-                    sh 'Checkout code berhasil dijalankan'
+                    echo 'Checkout code berhasil dijalankan'
                 }
             }
         }    
