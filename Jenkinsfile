@@ -48,37 +48,38 @@ pipeline {
 
         stage('SAST Analysis (SonarQube)') {
             steps {
-                withSonarQubeEnv('SonarQube-Lokal') {
-                    script{
-                        echo 'START SAST Analysis di Workspace: ${env.WORKSPACE}'
-                        docker.image('sonarsource/sonar-scanner-cli') {
-                            sh """
-                            sonar-scanner -X \
-                                -Dsonar.projectKey=juice-shop-saya \
-                                -Dsonar.sources=. \
-                                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                                -Dsonar.host.url=http://172.16.15.29:2020 \
-                                -Dsonar.token=sqa_fe9b3301c18595d96409b2b7311a3a4bd65e8be3 \
-                                -Dsonar.exclusions=node_modules/**,test/**,spec/**
-                            """
-                        }
-                        echo 'END:SUCCESS SAST Analysis berhasil dijalankan'
-                    }
-                }
-                // script {
-                //     // Kita gunakan image resmi sonar-scanner-cli agar Jenkins tetap bersih
-                //     docker.image('sonarsource/sonar-scanner-cli').inside('--network=host -u 0:0') {
-                //         sh """
-                //         sonar-scanner \
-                //           -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                //           -Dsonar.sources=. \
-                //           -Dsonar.host.url=${SONAR_HOST_URL} \
-                //           -Dsonar.token=${SONAR_TOKEN} \
-                //           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                //           -Dsonar.exclusions=node_modules/**,test/**,spec/**
-                //         """
+                // withSonarQubeEnv('SonarQube-Lokal') {
+                //     script{
+                //         echo 'START SAST Analysis di Workspace: ${env.WORKSPACE}'
+                //         docker.image('sonarsource/sonar-scanner-cli').inside('--network=host -u 0:0') {
+                //             sh """
+                //             sonar-scanner -X \
+                //                 -Dsonar.projectKey=juice-shop-saya \
+                //                 -Dsonar.sources=. \
+                //                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                //                 -Dsonar.host.url=http://172.16.15.29:2020 \
+                //                 -Dsonar.token=sqa_fe9b3301c18595d96409b2b7311a3a4bd65e8be3 \
+                //                 -Dsonar.exclusions=node_modules/**,test/**,spec/**
+                //             """
+                //         }
+                //         echo 'END:SUCCESS SAST Analysis berhasil dijalankan'
                 //     }
                 // }
+                script {
+                    echo 'START SAST Analysis di Workspace'
+                    // Kita gunakan image resmi sonar-scanner-cli agar Jenkins tetap bersih
+                    docker.image('sonarsource/sonar-scanner-cli').inside('--network=host -u 0:0') {
+                        sh """
+                        sonar-scanner \
+                          -Dsonar.projectKey=juice-shop-saya \
+                          -Dsonar.sources=. \
+                          -Dsonar.host.url=http://172.16.15.29:2020 \
+                          -Dsonar.token=sqa_fe9b3301c18595d96409b2b7311a3a4bd65e8be3 \
+                          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                          -Dsonar.exclusions=node_modules/**,test/**,spec/**
+                        """
+                    }
+                }
             }
         }
 
