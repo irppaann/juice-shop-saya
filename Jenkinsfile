@@ -53,7 +53,7 @@ pipeline {
                         docker.image('sonarsource/sonar-scanner-cli').inside('--network=host') {
                             sh """
                             sonar-scanner -X \
-                                -Dsonar.projectKey=juice-shop-project \
+                                -Dsonar.projectKey=juice-shop-saya \
                                 -Dsonar.sources=. \
                                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
                                 -Dsonar.host.url=${SONAR_HOST_URL} \
