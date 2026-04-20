@@ -50,7 +50,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube-Lokal') {
                     script{
-                        echo 'START SAST Analysis'
+                        echo 'START SAST Analysis di Workspace: ${env.WORKSPACE}'
                         docker.image('sonarsource/sonar-scanner-cli').inside('--network=host -u 0:0') {
                             sh """
                             sonar-scanner -X \
