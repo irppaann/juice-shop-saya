@@ -20,6 +20,7 @@ pipeline {
             steps {
                 script {
                     // Mengganti 'checkout scm' standar dengan detail untuk shallow clone
+                    sh 'Menjalankan checkout code'
                     checkout([$class: 'GitSCM', 
                         branches: [[name: '*/master']], // Pastikan sesuai branch Anda (master/main)
                         doGenerateSubmoduleConfigurations: false, 
@@ -39,6 +40,7 @@ pipeline {
                         submoduleCfg: [], 
                         userRemoteConfigs: [[url: 'https://github.com/irppaann/juice-shop-saya.git']]
                     ])
+                    sh 'Checkout code berhasil dijalankan'
                 }
             }
         }    
@@ -49,12 +51,12 @@ pipeline {
                     script{
                         docker.image('sonarsource/sonar-scanner-cli').inside('--network=host') {
                             sh """
-                            sonar-scanner \
+                            sonar-scanner -X \
                                 -Dsonar.projectKey=juice-shop-project \
                                 -Dsonar.sources=. \
                                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
                                 -Dsonar.host.url=${SONAR_HOST_URL} \
-                                -Dsonar.token=${SONAR_TOKEN} \
+                                -Dsonar.token=sqp_1f2ca5d4d98dfeaac2094a18fb6b89721bc313c7 \
                                 -Dsonar.exclusions=node_modules/**,test/**,spec/**
                             """
                         }
