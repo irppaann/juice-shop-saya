@@ -3,9 +3,10 @@ node {
     checkout scm
   }
   stage('SonarQube Analysis') {
-    def scannerHome = tool 'SonarScanner';
-    withSonarQubeEnv() {
-      sh "${scannerHome}/bin/sonar-scanner"
+    steps {
+      withSonarQubeEnv(installationName: 'SonarQube-Lokal') {
+        sh 'docker run --rm --network=host'
+      }
     }
   }
 }
