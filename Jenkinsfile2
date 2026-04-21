@@ -8,7 +8,7 @@ pipeline {
 
     triggers {
         // Optional kalau pakai webhook GitHub biasanya tidak perlu polling
-        // pollSCM('* * * * *')
+        pollSCM('* * * * *')
     }
 
     stages {
