@@ -14,7 +14,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/USERNAME/juice-shop-saya.git', branch: 'main'
+                checkout scm
             }
         }
 
