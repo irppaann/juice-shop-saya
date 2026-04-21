@@ -1,22 +1,49 @@
-node {
-  stage('SCM') {
-    checkout scm
-  }
-  stage('SonarQube Analysis') {
-    steps {
-      withSonarQubeEnv('SonarQube-Lokal') {
-        docker.image('sonarsource/sonar-scanner-cli').inside('--network=host -u 0:0') {
-          sh """
-          sonar-scanner -X \
-              -Dsonar.projectKey=scan-js-saya2 \
-              -Dsonar.sources=. \
-              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-              -Dsonar.host.url=http://172.16.15.29:2020 \
-              -Dsonar.token=sqa_fe9b3301c18595d96409b2b7311a3a4bd65e8be3 \
-              -Dsonar.exclusions=node_modules/**,test/**,spec/**
-          """
-        }
-      }
+pipeline {
+    agent any
+
+    environment {
+        SONARQUBE_ENV = 'SonarQube-Lokal'
+        PROJECT_KEY = 'scan-js-saya2'
     }
-  }
+
+    triggers {
+        // Optional kalau pakai webhook GitHub biasanya tidak perlu polling
+        // pollSCM('* * * * *')
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git url: 'https://github.com/USERNAME/juice-shop-saya.git', branch: 'main'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv("${SONARQUBE_ENV}") {
+                    sh """
+                    npx sonar-scanner \
+                      -Dsonar.projectKey=${PROJECT_KEY} \
+                      -Dsonar.sources=. \
+                      -Dsonar.host.url=http://172.16.15.29:2020 \
+                      -Dsonar.login=$SONAR_AUTH_TOKEN
+                    """
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+    }
 }
